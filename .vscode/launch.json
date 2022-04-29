@@ -1,0 +1,44 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Brave",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "runtimeExecutable": "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
+      // "port": 3000,
+      "url": "http://localhost:3000",
+      // "urlFilter": "http://localhost:*",
+      "webRoot": "${workspaceFolder}",
+    },
+    {
+      "name": "Launch Firefox",
+      "type": "firefox", // You need to install the extension https://marketplace.visualstudio.com/items?itemName=firefox-devtools.vscode-firefox-debug
+      "request": "launch",
+      "reAttach": true,
+      // "port": 3000,
+      "webRoot": "${workspaceFolder}",
+      "url": "http://localhost:3000",
+      // "urlFilter": "http://localhost:*"
+      // "pathMappings": [
+      //   {
+      //     "url": "http://localhost",
+      //     "path": "${workspaceFolder}"
+      //   }
+      // ]
+    },
+    {
+      "name": "Attach Firefox",
+      "type": "firefox", // You need to install the extension https://marketplace.visualstudio.com/items?itemName=firefox-devtools.vscode-firefox-debug
+      "request": "attach",
+      // "port": 3000,
+      // "reAttach": "true",
+      // "webRoot": "${workspaceFolder}",
+      // "url": "http://localhost:3000",
+      // "urlFilter": "http://localhost:*"
+    }
+  ]
+}
