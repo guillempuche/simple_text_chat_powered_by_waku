@@ -1,46 +1,22 @@
-# Getting Started with Create React App
+# Simple chat using Waku protocol
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Elementary chat sends and receives messages from the other peers connected to the same **topic**.
 
-## Available Scripts
+## Steps to run the chat
 
-In the project directory, you can run:
+1. Install the packages running the following command on the terminal `npm i`.
+2. Open two terminals.
+3. From the root of the project, run `npm start` on each of the two terminals.
+4. Open two tabs on the browser:
+   1. The first one opening `http://localhost:3000`
+   2. The second one opening `http://localhost:3001`
+5. You can chat.
 
-### `npm start`
+## To-do
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- When the peer receives a message, the time isn't wrong. You need to change the Protobuf definition of `timestamp` or transform the `timestamp` when we decode the Protobuf's message.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Resources
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Waku's specifications https://rfc.vac.dev/spec/10/
+- The code is a little variation of https://github.com/status-im/js-waku/blob/master/examples/relay-reactjs-chat/ (also in [Waku Connect's docs](https://docs.wakuconnect.dev/docs/guides/02_relay_receive_send_messages/))
