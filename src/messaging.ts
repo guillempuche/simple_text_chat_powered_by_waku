@@ -39,10 +39,10 @@ export class WakuService {
  * Waku state of the connection
  */
 export enum WakuStatus {
-  none,
-  starting,
-  connecting,
-  ready,
+  none = 'none',
+  starting = 'starting',
+  connecting = 'connecting',
+  ready = 'ready',
 }
 
 /**
@@ -57,8 +57,8 @@ export const topics: { simple_text: string } = {
 /**
  * List of type of messages defined with Protocol Buffer
  */
-export const protoMessagesTypes: { text: protobuf.Type } = {
-  text: new protobuf.Type('')
+export const protoMessagesTypes: { simpleMessage: protobuf.Type } = {
+  simpleMessage: new protobuf.Type('')
     .add(new protobuf.Field('timestamp', 1, 'uint64'))
     .add(new protobuf.Field('text', 2, 'string')),
 };
@@ -68,7 +68,7 @@ export const protoMessagesTypes: { text: protobuf.Type } = {
  */
 export interface UiSimpleMessage {
   text: string;
-  timestamp: Date;
+  timestamp: number;
 }
 
 /**
@@ -81,23 +81,24 @@ export const sendMessageViaWaku = async ({
   message,
   timestamp,
   topic,
-}: // wakuInstance,
-{
+}: {
   message: string;
-  timestamp: Date;
+  timestamp: number;
   topic: string;
-  // wakuInstance: Waku;
 }): Promise<void> => {
   // Encode to protobuf
-  const protoMessage = protoMessagesTypes.text.create({
+  const protoMessage = protoMessagesTypes.simpleMessage.create({
     timestamp: timestamp,
     text: message,
   });
-  const payload = protoMessagesTypes.text.encode(protoMessage).finish();
+  const payload = protoMessagesTypes.simpleMessage
+    .encode(protoMessage)
+    .finish();
 
   // Wrap in a Waku Message
   return WakuMessage.fromBytes(payload, topic).then(async (wakuMessage) => {
     const waku = await WakuService.getInstance();
+
     // Send over Waku Relay
     waku.relay.send(wakuMessage);
     // wakuInstance.relay.send(wakuMessage)
@@ -105,46 +106,60 @@ export const sendMessageViaWaku = async ({
 };
 
 function onIncomingMessage(
-  // callback: (
   wakuMessage: WakuMessage,
-  //  { payload: Uint8Array | protobuf.Reader }
-  // ) => void,
-) {
-  // callback((wakuMessage) => {
+  callback?: (newMessage: UiSimpleMessage) => void,
+): void {
   if (!wakuMessage.payload) return;
 
-  // const { text, timestamp } = protoMessages.text.decode(wakuMessage.payload);
-  const { text, timestamp }: any = protoMessagesTypes.text.decode(
+  const { text, timestamp }: any = protoMessagesTypes.simpleMessage.decode(
     wakuMessage.payload,
   );
 
-  // const time = new Date();
-  // time.setTime(timestamp);
-  // const message = { text, timestamp: time };
-  // setMessages((messages) => {
-  // 	return [message].concat(messages);
-  // });
-
+  // const timestampString = timestamp.toString();
+  // const datetime = new Date(timestamp.toString().toN);
+  // const convertedTimestamp = datetime.getTime();
+  // const t = new Date(timestamp);
+  // const message: UiSimpleMessage = {
+  //   text,
+  //   timestamp: convertedTimestamp,
+  // };
+  // console.log('new message', message);
+  // console.log(
+  //   '---- timestamp %s %f',
+  //   typeof message.timestamp,
+  //   message.timestamp,
+  // );
+  // console.log('---- timestamp string', convertedTimestamp.toString());
+  // const date = new Date(message.timestamp.toPrecision());
+  // console.log(
+  //   '---- timestamp year',
+  //   new Date(convertedTimestamp).getFullYear(),
+  // );
   const message: UiSimpleMessage = {
     text,
     timestamp,
   };
-  console.log('new message', message);
-  // return previousMessage.push(message);
-  // });
+
+  if (callback !== undefined) callback(message);
 }
 
 export const addObserverIncomingMessage = async (
   topic: string,
+  getIncomingMessage: (incomingMessage: UiSimpleMessage) => void,
 ): Promise<void> => {
   const waku = await WakuService.getInstance();
+
   // Pass the content topic to only process messages related to your dApp
-  waku.relay.addObserver(onIncomingMessage, [topic]);
+  waku.relay.addObserver(
+    (message) => onIncomingMessage(message, getIncomingMessage),
+    [topic],
+  );
 };
 
 export const removeObserverIncomingMessage = async (
   topic: string,
 ): Promise<void> => {
   const waku = await WakuService.getInstance();
-  waku.relay.deleteObserver(onIncomingMessage, [topic]);
+
+  waku.relay.deleteObserver(() => onIncomingMessage, [topic]);
 };

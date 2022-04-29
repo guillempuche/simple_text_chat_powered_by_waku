@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Waku } from 'js-waku';
 
 import {
   sendMessageViaWaku,
@@ -15,7 +14,7 @@ function App() {
   const [topic] = useState<string>(topics.simple_text);
   const [inputMessage, setInputMessage] = useState<string>('');
   const [messages, setMessages] = useState<UiSimpleMessage[]>([]);
-  const [waku, setWaku] = useState<Waku | undefined>(undefined);
+  // const [waku, setWaku] = useState<Waku | undefined>(undefined);
   const [wakuStatus, setWakuStatus] = useState<WakuStatus>(WakuStatus.none);
 
   useEffect(() => {
@@ -48,48 +47,69 @@ function App() {
   const removeObserver = useCallback(removeObserverIncomingMessage, []);
 
   useEffect(() => {
-    addObserver(topic);
+    addObserver(topic, (message: UiSimpleMessage) => {
+      console.log(message);
+
+      setMessages([...messages, message]);
+    });
 
     // `cleanUp` is called when the component is unmounted.
     return function cleanUp() {
       removeObserver(topic);
     };
-  }, [topic, addObserver, removeObserver]);
+  }, [topic, messages, addObserver, removeObserver]);
 
-  const onSendMessage = () => {
-    // Check Waku is started and connected first.
-    if (wakuStatus !== WakuStatus.ready) return;
+  const onSendMessage: React.FormEventHandler = async (event) => {
+    event.preventDefault();
 
-    sendMessageViaWaku({
-      message: inputMessage,
-      timestamp: new Date(),
+    // Check Waku is started and connected first or the input message is empty..
+    if (wakuStatus !== WakuStatus.ready || inputMessage === '') return;
+
+    const now = new Date();
+    const newMessage: UiSimpleMessage = {
+      text: inputMessage,
+      timestamp: now.getTime(),
+    };
+    await sendMessageViaWaku({
+      message: newMessage.text,
+      timestamp: newMessage.timestamp,
       topic: topic,
-      // wakuInstance: waku!,
     });
+
+    console.log(typeof newMessage.timestamp);
+
+    setMessages([...messages, newMessage]);
+    setInputMessage('');
   };
 
   return (
     <div className="App">
       <header className="App-header">
-        <p>{wakuStatus}</p>
-        <input
-          name="input"
-          onChange={(event) => setInputMessage(event.target.value)}
-          type="text"
-        />
-        <button
-          onClick={onSendMessage}
-          disabled={wakuStatus !== WakuStatus.ready}
-        >
-          Send Message
-        </button>
+        <p>{wakuStatus.toString()}</p>
+        <form onSubmit={onSendMessage}>
+          <input
+            // ref={htmlElementInput}
+            value={inputMessage}
+            onChange={(event) => setInputMessage(event.target.value)}
+            type="text"
+          />
+          <button
+            // onClick={onSendMessage}
+            // Don't send the message if Waku isn't ready or the input message is empty.
+            disabled={wakuStatus !== WakuStatus.ready || inputMessage === ''}
+          >
+            Send Message
+          </button>
+        </form>
 
         <ul>
           {messages.map((msg) => {
+            const date = new Date(msg.timestamp);
             return (
-              <li>
+              <li key={msg.timestamp}>
                 <p>
-                  {msg.timestamp.toString()}: {msg.text}
+                  [{date.getDay()}/{date.getMonth()}/{date.getFullYear()}{' '}
+                  {date.getHours()}:{date.getMinutes()}] {msg.text}
                 </p>
               </li>
             );
