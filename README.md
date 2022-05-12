@@ -14,8 +14,6 @@ Elementary chat sends and receives messages from the other peers connected to th
 
 ## To-do
 
-- When the peer receives a message, the time isn't wrong. You need to change the Protobuf definition of `timestamp` or transform the `timestamp` when we decode the Protobuf's message.
-
 ## Resources
 
 - Waku's specifications https://rfc.vac.dev/spec/10/
