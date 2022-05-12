@@ -68,11 +68,12 @@ function App() {
       topic: topic,
     });
 
+    // To debug the message sent.
     console.log(typeof newMessage.timestamp);
 
     saveMessages([...messages, newMessage]);
 
-    // Reset the input message.
+    // Reset the input message after sending it.
     setInputMessage('');
   };
 
@@ -103,11 +104,11 @@ function App() {
           </button>
         </form>
 
-        <ul aria-label="List of messages">
+        <div aria-label="List of messages">
           {messages.map((msg) => {
             const date = new Date(Number(msg.timestamp));
             return (
-              <li key={msg.timestamp}>
+              <div key={msg.timestamp}>
                 <p>
                   <i>
                     {date.getDay()}/{date.getMonth()}/{date.getFullYear()}{' '}
@@ -115,10 +116,10 @@ function App() {
                   </i>{' '}
                   <b>{msg.username}</b> {msg.text}
                 </p>
-              </li>
+              </div>
             );
           })}
-        </ul>
+        </div>
       </main>
     </>
   );
