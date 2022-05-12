@@ -2,6 +2,9 @@
 
 Elementary chat sends and receives messages from the other peers connected to the same **topic**.
 
+![Screenshot of the chat: first user is typing something](screenshot_1.png)
+![Screenshot of the chat: second receive message and reply](screenshot_2.png)
+
 ## Steps to run the chat
 
 1. Install the packages running the following command on the terminal `npm i`.
