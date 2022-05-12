@@ -5,7 +5,14 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Brave",
+      "name": "Launch Chrome port=3000",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}",
+    },
+    {
+      "name": "Launch Brave (macOS) port=3000",
       "type": "pwa-chrome",
       "request": "launch",
       "runtimeExecutable": "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
@@ -14,31 +21,5 @@
       // "urlFilter": "http://localhost:*",
       "webRoot": "${workspaceFolder}",
     },
-    {
-      "name": "Launch Firefox",
-      "type": "firefox", // You need to install the extension https://marketplace.visualstudio.com/items?itemName=firefox-devtools.vscode-firefox-debug
-      "request": "launch",
-      "reAttach": true,
-      // "port": 3000,
-      "webRoot": "${workspaceFolder}",
-      "url": "http://localhost:3000",
-      // "urlFilter": "http://localhost:*"
-      // "pathMappings": [
-      //   {
-      //     "url": "http://localhost",
-      //     "path": "${workspaceFolder}"
-      //   }
-      // ]
-    },
-    {
-      "name": "Attach Firefox",
-      "type": "firefox", // You need to install the extension https://marketplace.visualstudio.com/items?itemName=firefox-devtools.vscode-firefox-debug
-      "request": "attach",
-      // "port": 3000,
-      // "reAttach": "true",
-      // "webRoot": "${workspaceFolder}",
-      // "url": "http://localhost:3000",
-      // "urlFilter": "http://localhost:*"
-    }
   ]
 }
