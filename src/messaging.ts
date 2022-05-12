@@ -59,16 +59,19 @@ export const topics: { simple_text: string } = {
  */
 export const protoMessagesTypes: { simpleMessage: protobuf.Type } = {
   simpleMessage: new protobuf.Type('')
-    .add(new protobuf.Field('timestamp', 1, 'uint64'))
-    .add(new protobuf.Field('text', 2, 'string')),
+    // .add(new protobuf.Field('timestamp', 1, 'uint64'))
+    .add(new protobuf.Field('timestamp', 1, 'string'))
+    .add(new protobuf.Field('username', 2, 'string'))
+    .add(new protobuf.Field('text', 3, 'string')),
 };
 
 /**
  * Simple message format for the UI.
  */
 export interface UiSimpleMessage {
+  timestamp: string;
+  username: string;
   text: string;
-  timestamp: number;
 }
 
 /**
@@ -80,16 +83,19 @@ export interface UiSimpleMessage {
 export const sendMessageViaWaku = async ({
   message,
   timestamp,
+  username,
   topic,
 }: {
   message: string;
-  timestamp: number;
+  timestamp: string;
+  username: string;
   topic: string;
 }): Promise<void> => {
   // Encode to protobuf
   const protoMessage = protoMessagesTypes.simpleMessage.create({
     timestamp: timestamp,
     text: message,
+    username: username,
   });
   const payload = protoMessagesTypes.simpleMessage
     .encode(protoMessage)
@@ -111,9 +117,8 @@ function onIncomingMessage(
 ): void {
   if (!wakuMessage.payload) return;
 
-  const { text, timestamp }: any = protoMessagesTypes.simpleMessage.decode(
-    wakuMessage.payload,
-  );
+  const { text, timestamp, username }: any =
+    protoMessagesTypes.simpleMessage.decode(wakuMessage.payload);
 
   // const timestampString = timestamp.toString();
   // const datetime = new Date(timestamp.toString().toN);
@@ -136,8 +141,9 @@ function onIncomingMessage(
   //   new Date(convertedTimestamp).getFullYear(),
   // );
   const message: UiSimpleMessage = {
-    text,
     timestamp,
+    username,
+    text,
   };
 
   if (callback !== undefined) callback(message);
